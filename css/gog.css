@@ -1,0 +1,17 @@
+#gog-container{
+    width: 100%;
+    height: 50vh; 
+    display: none;
+    position: relative;
+    margin: 0 auto;
+}
+
+.gog-activado{
+    filter: grayscale(100);
+}
+
+#gog{
+    float: left;
+    height: 100%;
+    width: 100%;
+}
