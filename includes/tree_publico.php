@@ -279,6 +279,7 @@ require('data-jstree.php')
             <li id="informacion_complementaria" data-jstree='{"icon": "images/icon/folder-1-16.png", "category":"Informacion Complementaria"}'> Informacion complementaria
                 <ul>
                     <li id="vw_barrios" data-jstree='{"icon": "<?php echo 'backend/glg.php?LAYER=vw_barrios_de_la_ciudad&WS=informacion_catastral'; ?>", "category":"Informacion catastral"}'>Barrios</li>
+                    <li id="vw_asentamiento_renabap" data-jstree='{"icon": "<?php echo 'backend/glg.php?LAYER=vw_asentamiento_renabap&WS=informacion_catastral'; ?>", "category":"Informacion catastral"}'>Asentamientos informales (Re.Na.Ba.P.)</li>
                     <li id="vw_zonas_municipales" data-jstree='{"icon": "<?php echo 'backend/glg.php?LAYER=vw_zonas_municipales&WS=desarrollo_comunitario'; ?>", "category":"Desarrollo social comunitario"}'>Zonas municipales</li>
                     <li id="zonas_ele" data-jstree='{"icon": "images/zonas_ele_reference.png", "category":"Zonas Ele"}'>Circuitos Electorales</li>
                     <li id="poligonos_aux" data-jstree='{"icon": ""}'>Poligonos Auxiliares</li>

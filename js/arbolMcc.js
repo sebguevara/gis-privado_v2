@@ -33,6 +33,9 @@ const arbolMcc = (function(){
                         case 'vw_barrios':
                             map.addLayer(vw_barrios);
                             break;
+                        case 'vw_asentamiento_renabap':
+                            map.addLayer(vw_asentamiento_renabap);
+                            break;
                         case 'vw_zonas_municipales':
                             map.addLayer(vw_zonas_municipales);
                             break;
@@ -355,6 +358,9 @@ const arbolMcc = (function(){
 
                         case 'vw_barrios':
                             map.removeLayer(vw_barrios);
+                            break;
+                        case 'vw_asentamiento_renabap':
+                            map.removeLayer(vw_asentamiento_renabap);
                             break;
                         case 'vw_zonas_municipales':
                             map.removeLayer(vw_zonas_municipales);

@@ -204,6 +204,11 @@ var wms_GIS = L.WMS.Source.extend({
             break;
 
 
+            case "vw_asentamiento_renabap":
+                datos1 = '<div><h2>Asentamientos Re.Na.Ba.P.</h2></div>';
+                datos1 += '<b>Nombre asentamiento:</b>: ' + nvl(datos.features[0].properties['nombre_barrio']);
+                break;
+
             case "vw_distritos_planeamiento_urbano": 
                 datos1 = '<div><h2>Distritos del C&oacute;digo de Planeamiento Urbano</h2></div>';
                 datos1 += '<b>Distrito:</b> ' + datos.features[0].properties['distrito'];
