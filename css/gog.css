@@ -1,17 +1,17 @@
-#gog-container{
-    width: 100%;
-    height: 50vh; 
-    display: none;
-    position: relative;
-    margin: 0 auto;
-}
-
 .gog-activado{
     filter: grayscale(100);
 }
 
-#gog{
-    float: left;
-    height: 100%;
-    width: 100%;
+.google-selection-tooltip{
+    background: rgba(20, 20, 20, 0.88);
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 10px;
+}
+
+.google-selection-tooltip:before{
+    display: none;
 }

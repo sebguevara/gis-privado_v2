@@ -24,9 +24,7 @@ if (!isset($_SESSION['usuario'])) header('Location: login.php');
   <link href='https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css' rel='stylesheet' />
   <script src='https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.js'></script>
 
-  <!-- STREET VIEW API -->
-    <!-- STREET VIEW API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZIv_HnJ9bRjwc3Yju-9dhy4Nmr3vmoBo"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZIv_HnJ9bRjwc3Yju-9dhy4Nmr3vmoBo"></script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css">
@@ -64,9 +62,6 @@ if (!isset($_SESSION['usuario'])) header('Location: login.php');
 
     <i class="fa fa-times" id="cerrarVisorMapillary"></i>
     <div id="mly"></div>
-  </div>
-  <div id="gog-container" class="">
-    <div id="gog"></div>
   </div>
 
   <div id="toggleResumen">

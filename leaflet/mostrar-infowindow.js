@@ -48,6 +48,9 @@ var wms_GIS = L.WMS.Source.extend({
         if (!this._map) {
             return;
         }
+        if (window.isStreetViewSelectionActive) {
+            return false;
+        }
 
         if (info == '') return false;
 

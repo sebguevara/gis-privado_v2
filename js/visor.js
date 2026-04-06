@@ -24,10 +24,7 @@ export function visor(e) {
             }
             mly.currentMarkerMly = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
         } else if ($('#botonGoogle').hasClass('gog-activado')) {
-            abrirVisorGog();
-            map.invalidateSize(true);
-            if ($('#lateral').hasClass('abierto')) contraerBarraLateral();
-            gog.iniciar(e);
+            gog.handleMapClick(e.latlng);
         }
     }
 }
@@ -35,10 +32,5 @@ export function visor(e) {
 function abrirVisorMapillary(){
     $('#mly-container').css('display', 'block');
     $('#map').css('height', '50vh');
-}
-
-function abrirVisorGog(){
-    $('#gog-container').css('display', 'block');
-    $('#map').css('height','50vh');
 }
 

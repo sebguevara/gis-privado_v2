@@ -104,7 +104,11 @@ var mly = (function(map){
     function activarDesactivar(){
         //Si el boton google esta activado lo desactiva
         if($('#botonGoogle').hasClass('gog-activado')){
-            $('#botonGoogle').removeClass('gog-activado');
+            if (typeof window.desactivarStreetView === 'function') {
+                window.desactivarStreetView();
+            } else {
+                $('#botonGoogle').removeClass('gog-activado');
+            }
         }
 
         $('#botonMapillary').toggleClass('mapillary-activado');

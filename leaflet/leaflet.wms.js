@@ -140,6 +140,9 @@ wms.Source = L.Layer.extend({
         // Identify map features in response to map clicks. To customize this
         // behavior, create a class extending wms.Source and override one or
         // more of the following hook functions.
+        if (window.isStreetViewSelectionActive) {
+            return;
+        }
 
         var layers = this.getIdentifyLayers();
         if (!layers.length) {
@@ -213,6 +216,9 @@ wms.Source = L.Layer.extend({
     'showFeatureInfo': function(latlng, info) {
         // Hook to handle displaying parsed AJAX response to the user
         if (!this._map) {
+            return;
+        }
+        if (window.isStreetViewSelectionActive) {
             return;
         }
         this._map.openPopup(info, latlng);
