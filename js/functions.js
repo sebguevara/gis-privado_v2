@@ -1,3 +1,121 @@
+async function getParcelasProvin() {
+    try {
+        const response = await fetch('backend/api.php?query=parcelas_provin');
+        const data = await response.json();
+
+        let myStyle = {
+            "color": "#28a745",
+            "weight": 5,
+            "opacity": 0.65,
+            "fillColor": "#CCC",
+            "fillOpacity": 0.40
+        }
+
+        let mygeoJSON = L.geoJSON(data, {
+            style :myStyle,
+            onEachFeature:  function (feature, layer) {
+
+               
+
+                layer.bindPopup(``, {maxWidth: 400});
+
+                layer.on('click', async function(){
+                    let { mensura,razsoc,barrio,supparcela,supconstr,valor_e,valor_t } = await mensuraYrazsoc(feature.properties['gid']);
+
+                    let datos1 = '<div style="width:400px; overflow:auto"><h2>Parcelas Provinciales</h2></div>';
+                    datos1 += '<h5><b>Partida</b>: ' + feature.properties['adrema']+'</h5>';
+                    datos1 += '<table class="tabla-lote" style="border: solid 1px #332E30; padding: 0 11px;">';
+                    datos1 += '<tr>';
+                    datos1 += '<td class="linea-rb">Mzd</td><td class="linea-rb">Mzh</td><td class="linea-rb">Letra</td><td class="linea-rb">Lote</td><td class="linea-rb"">Lote Al</td><td class="linea-rb">Mensura</td><td class="linea-rb">Titular</td>';
+                    datos1 += '</tr>';
+                    datos1 += '<tr>';
+                    datos1 += '<td class="linea-rb">' + ((feature.properties['mzd'] == null) ? '' : feature.properties['mzd']) + '</td>';
+                    datos1 += '<td class="linea-rb">' + (feature.properties['mzh'] === null ? '' : feature.properties['mzh']) + '</td>';
+                    datos1 += '<td class="linea-rb">' + (feature.properties['letra'] === null ? '' : feature.properties['letra']) + '</td>';
+                    datos1 += '<td class="linea-rb">' + (feature.properties['lote'] === null ? '' : feature.properties['lote']) + '</td>';
+                    datos1 += '<td class="linea-rb">' + (feature.properties['loteal'] === null ? '' : feature.properties['loteal']) + '</td>';
+                    datos1 += '<td class="linea-rb">' + ((feature.properties['adrema']=='PH') ? '':mensura) + '</td>';
+                    datos1 += '<td class="linea-rb">' + ((feature.properties['adrema']=='PH') ? '':razsoc)+'</td>'; 
+                    datos1 += '</tr>';
+                    datos1 += '</table>';
+                    
+                    datos1 += '<h5><b>Clase: </b>'+feature.properties['clase_obj']+'</h5>'
+                    datos1 += '' + '<b>Frente / Fondo:</b> ' + feature.properties['frente'] + ' / ' + feature.properties['fondo'];
+                    datos1 += '<BR />' + '<b>Dirección:</b> '; 
+                    datos1 += '<span id="parcel_description">'+ unescape(decodeURIComponent(feature.properties['descripcio'])) + '</span>';
+                    datos1 += '<span id="parcel_puerta"> ' + feature.properties['puerta'] + '</span> <br>';
+    
+                    let cyd = await catalogoYdistrito(feature.properties['gid']);
+                    datos1 += '<span id="distrito"><b>Distrito</b>: '+cyd.distritos+'</span><br>';
+                    datos1 += '<span id="catalogado"><b>Catalogado</b>: '+((cyd.encatalogo) ? 'Si' : 'No')+'</span><br>';
+                    datos1 += '<span id="barrio"><b>Barrio</b>: '+((feature.properties['adrema']=='PH') ? '':barrio)+'</span>';
+    
+                    if (feature.properties['adrema'] != 'PH') {
+                        datos1 += '<br><span><b>Sup.total</b>: '+ supparcela+'</span><br>';
+                        datos1 += '<span><b>Sup.construida</b>: '+ supconstr +'</span><br>';
+                        datos1 += '<span><b>Valor edificio</b>: '+ valor_e +'</span><br>';
+                        datos1 += '<span><b>Valor tierra</b>: '+ valor_t +'</span><br>';
+                    }
+                    
+                    if(feature.properties['adrema'] == 'PH'){
+                        datos1 += '<BR />' +  '<b>Piso: </b>' + (feature.properties['piso'] || '-') + ' <b>Depto: </b>' + (feature.properties['dpto'] || '-');
+                        datos1 += '<BR />' + '<b>Bald&iacute;o:</b> '  + (feature.properties['baldio'] || '-');
+                        let tabla1 = '<TABLE class="mr-3" border="1" style="width: auto;"><THEAD><TR><TH>ADREMAS</TH><TH>PISO</TH><TH>DPTO</TH><TH>TITULAR</TH><TH>MENSURA</TH><TH>SUPTOTAL</TH><TH>SUPCONSTR</TH><TH>VALOR EDIF</TH><TH>VALOR TIERRA</TH></TR></THEAD><TBODY id="tbody">';
+                        let fila;
+                        
+                        //datos.features.forEach(async feature => {
+                            if (feature.properties.adrema == 'PH') {
+                                let a = await phToAdrema(feature.properties.gid);
+                                a.forEach(adrema => {
+                                    fila = '';
+                                    fila += '<TR>';
+                                    fila += '<TD>' + adrema['adrema'] + '</TD>';
+                                    fila += '<TD>' + adrema['piso'] + '</TD>';
+                                    fila += '<TD>' + adrema['dpto'] + '</TD>';
+                                    fila += '<TD>' + adrema['razsoc'] + '</TD>';
+                                    fila += '<TD>' + adrema['mensura'] + '</TD>';
+                                    fila += '<TD>' + adrema['suptotal'] + '</TD>';
+                                    fila += '<TD>' + adrema['supconstr'] + '</TD>';
+                                    fila += '<TD>' + adrema['valor_e'] + '</TD>';
+                                    fila += '<TD>' + adrema['valor_t'] + '</TD>';
+                                    fila += '</TR>';
+                                    document.querySelector('#tbody').innerHTML += fila;
+                                });
+    
+                                document.querySelector('#parcel_description').innerHTML = unescape(decodeURIComponent(a[0].descripcion));
+                                document.querySelector('#parcel_puerta').innerHTML = ' '+a[0].puerta;
+                                document.querySelector('#distrito').innerHTML = '<b>Distrito</b>: '+ a[0].distrito;
+                                document.querySelector('#catalogado').innerHTML = '<b>Catalogado</b>: '+ ((a[0].encatalogo == false) ? 'No' : 'Si');
+                                document.querySelector('#barrio').innerHTML = '<b>Barrio</b>: ' + a[0].barrio;
+                            } else {
+                                fila = '';
+                                fila += '<TR>';
+                                fila += '<TD>' + feature.properties.adrema + '</TD>';
+                                fila += '<TD>' + feature.properties.piso + '</TD>';
+                                fila += '<TD>' + feature.properties.dpto + '</TD>';
+                                fila += '</TR>';
+                                tabla1 += fila;
+                                
+                            }
+                        //});
+                        tabla1 += '</TBODY></TABLE>';
+                        datos1 += '<DIV class="text-center" style="width: 400px; max-height:200px; overflow: auto;">';
+                        datos1 += tabla1;
+                        
+                        datos1 += '</DIV>';
+                    }
+
+                    this.setPopupContent(datos1);
+                })
+            }
+        });
+
+        return mygeoJSON;
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 async function getParcelasMuni() {
     try {
         const response = await fetch('backend/api.php?query=parcelas_muni');

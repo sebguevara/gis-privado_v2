@@ -110,6 +110,7 @@ var parcelas_muni_baldias = new wms_GIS("https://gisdesa.ciudaddecorrientes.gov.
 
 
 var parcelas_muni = undefined;
+var parcelas_provin = undefined;
 
 var lyrZonaDisponible = undefined;
 

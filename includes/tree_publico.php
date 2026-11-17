@@ -289,6 +289,7 @@ require('data-jstree.php')
                     <li id="vw_ide_calle_por_tipo_calzada" data-jstree='{"icon": "<?php echo 'backend/glg.php?LAYER=vw_ide_calle_por_tipo_calzada&WS=red_vial'; ?>", "category":"Red vial"}'>Calles por tipo de calzada</li>
                     <li id="vw_parcelas" data-jstree='{"icon": "<?php echo 'backend/glg.php?LAYER=vw_parcelas&WS=informacion_catastral'; ?>", "category":"Red vial"}'>Parcelario Catastral</li>
                     <li id="parcelas_muni" data-jstree='{"icon": "images/municipales.jpg", "category":"Red vial"}'>Parcelas Municipales</li>
+                    <li id="parcelas_provin" data-jstree='{"icon": "images/provinciales.svg", "category":"Red vial"}'>Parcelas Provinciales</li>
                     
                     <?php if(in_array($_SESSION['usuario'], ['bertolod', 'rosperoni', 'wichmanna', 'nahuels'])): ?>
                         <li id="parcelas_muni_baldias" data-jstree='{"icon": "images/muni_baldias.jpg", "category":"Red vial"}'>Parcelas Municipales Baldias</li>

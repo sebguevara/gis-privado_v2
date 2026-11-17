@@ -802,6 +802,55 @@ function sacReclamos($conexion)
 }
 
 
+function getParcelasProvin($conexion)
+{
+    $sql = $conexion->query("SELECT 
+                            p2.*,
+                            st_asgeojson( st_transform( st_setsrid(p2.the_geom, 22185), 4326 ) ) as \"geometry\"  
+                            FROM gismcc.parcelas p2
+                            WHERE p2.razsoc ilike('%Provin%')");
+   
+
+    $data['type'] = 'FeatureCollection';
+    $data['features'] = [];
+
+    while ($row = $sql->fetchObject()) {
+        $geometry = json_decode($row->geometry, true);
+        $data['features'][] = [
+            'type' => 'Feature',
+            'geometry' => [
+                'type' => $geometry['type'],
+                'coordinates' => $geometry['coordinates'],
+            ],
+            'properties' => [
+                'gid' => $row->gid,
+                'adrema' => $row->adrema,
+                'razsoc' => $row->razsoc,
+                'cuit' => $row->cuit,
+                'mzd' => $row->mzd,
+                'mzh' => $row->mzh,
+                'lote' => $row->lote,
+                'loteal' => $row->loteal,
+                'letra' => $row->letra,
+                'descripcio' => $row->descripcio,
+                'puerta' => $row->puerta,
+                'piso' => $row->piso,
+                'dpto' => $row->dpto,
+                'baldio' => $row->baldio,
+                'frente' => $row->frente,
+                'fondo' => $row->fondo,
+                'clase_obj' => $row->clase_obj
+            ]
+        ];
+    }
+
+    
+    $conexion = null;
+    return json_encode($data);
+
+}
+
+
 $query = isset($_GET['query']) ? $_GET['query'] : false;
 
 
@@ -836,6 +885,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         isLogged();
         header('Content-Type: application/json');
         echo sacReclamos($conexion);
+    } else if ($query == 'parcelas_provin') {
+
+        isLogged();
+        $response = getParcelasProvin($conexion);
+        echo $response;
     } else if (isset($_GET['action']) && $_GET['action'] == 'logout') {
 
         unset($_SESSION['usuario']);

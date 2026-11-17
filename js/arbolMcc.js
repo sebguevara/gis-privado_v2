@@ -64,6 +64,12 @@ const arbolMcc = (function(){
                                 if(parcelas_muni) map.addLayer(parcelas_muni);
                             }else map.addLayer(parcelas_muni)
                             break;
+                        case 'parcelas_provin':
+                            if(!parcelas_provin){
+                                parcelas_provin = await getParcelasProvin();
+                                if(parcelas_provin) map.addLayer(parcelas_provin);
+                            }else map.addLayer(parcelas_provin)
+                            break;
                         case 'parcelas_muni_baldias':
                             map.addLayer(parcelas_muni_baldias);
                             break;
@@ -404,6 +410,9 @@ const arbolMcc = (function(){
                             break;
                         case 'parcelas_muni':
                             map.removeLayer(parcelas_muni);
+                            break;
+                        case 'parcelas_provin':
+                            map.removeLayer(parcelas_provin);
                             break;
                         case 'parcelas_muni_baldias':
                             map.removeLayer(parcelas_muni_baldias);
