@@ -296,6 +296,13 @@ require('data-jstree.php')
                 </ul>
             </li>
 
+            <li id="reclamos_sac" data-jstree='{"icon": "images/icon/folder-1-16.png"}'> Reclamos SAC
+                <ul>
+                    <li id="sac_solucionados" data-jstree='{"icon": ""}'>Reclamos solucionados</li>
+                    <li id="sac_auditoria" data-jstree='{"icon": ""}'>Auditoría (llamada al vecino)</li>
+                </ul>
+            </li>
+
             <!-- <li id="desasocialComunit" data-jstree='{"icon": "images/icon/folder-1-16.png", "category":"Desarrollo social comunitario"}'> Desarrollo social comunitario
                 <ul>
                     <li id="vw_zonas_municipales" data-jstree='{"icon": "<?php echo 'backend/glg.php?LAYER=vw_zonas_municipales&WS=desarrollo_comunitario'; ?>", "category":"Desarrollo social comunitario"}'>Zonas municipales</li>

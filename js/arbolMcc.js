@@ -1,4 +1,5 @@
 import map from './map.js';
+import sacReclamos from './sacReclamos.js';
 
 const arbolMcc = (function(){
     var capas=[];
@@ -71,6 +72,10 @@ const arbolMcc = (function(){
                                 zonas_ele = await getZonasEle();
                                 if(zonas_ele) capas['zonas_ele'] = zonas_ele.addTo(map);
                             }else zonas_ele.addTo(map);
+                            break;
+                        case 'sac_solucionados':
+                        case 'sac_auditoria':
+                            sacReclamos.show(data.node.id);
                             break;
                         case 'poligonos_aux':
                             if(!poligonos_aux) {
@@ -387,6 +392,11 @@ const arbolMcc = (function(){
 
                         case 'poligonos_aux':
                             capas['poligonos_aux'].remove();
+                            break;
+
+                        case 'sac_solucionados':
+                        case 'sac_auditoria':
+                            sacReclamos.hide(data.node.id);
                             break;
                         
                         case 'vw_parcelas':
