@@ -732,76 +732,6 @@ function getParcelasMuni($conexion)
 }
 
 
-// ================================================================================================
-// RECLAMOS SAC SOLUCIONADOS + AUDITORÍA (vista gismcc.mv_sac_solucionados, ver sql/sac_reclamos.sql)
-
-// Último cierre de auditoría: el miércoles 21 hs más reciente (hora de Argentina).
-const SAC_CORTE = "(date_trunc('week', (now() AT TIME ZONE 'America/Argentina/Buenos_Aires') - interval '2 days 21 hours') + interval '2 days 21 hours')";
-
-// Refresca la vista una vez por semana, en el primer pedido posterior al cierre.
-function sacRefrescar($conexion)
-{
-    $vencida = $conexion->query("SELECT (max(actualizado) < " . SAC_CORTE . ")::int FROM gismcc.mv_sac_solucionados")->fetchColumn();
-    if ($vencida && $conexion->query("SELECT pg_try_advisory_lock(51051)::int")->fetchColumn()) {
-        try {
-            $conexion->exec("REFRESH MATERIALIZED VIEW gismcc.mv_sac_solucionados");
-        } finally {
-            $conexion->query("SELECT pg_advisory_unlock(51051)");
-        }
-    }
-}
-
-function sacPeriodos($conexion)
-{
-    sacRefrescar($conexion);
-    $sql = "WITH c AS (SELECT " . SAC_CORTE . "::date AS corte)
-            SELECT c.corte,
-                   (SELECT max(actualizado) FROM gismcc.mv_sac_solucionados) AS actualizado,
-                   (SELECT array_to_json(array_agg(to_char(d, 'YYYY-MM-DD')))
-                      FROM generate_series(c.corte - 6, c.corte - 364, interval '-7 days') d) AS semanas,  -- último año: 52 semanas
-                   (SELECT array_to_json(array_agg(to_char(d, 'YYYY-MM')))
-                      FROM generate_series(date_trunc('month', c.corte), date_trunc('month', c.corte) - interval '11 months', interval '-1 month') d) AS meses  -- 12 meses
-            FROM c";
-    $row = $conexion->query($sql)->fetchObject();
-    return json_encode([
-        'corte' => $row->corte,
-        'actualizado' => $row->actualizado,
-        'semanas' => json_decode($row->semanas),
-        'meses' => json_decode($row->meses),
-    ]);
-}
-
-// Puntos del período (una semana jueves-miércoles o un mes, nunca más), cortados al último cierre.
-function sacReclamos($conexion)
-{
-    $periodo = isset($_GET['periodo']) ? $_GET['periodo'] : '';
-    $desde = isset($_GET['desde']) ? $_GET['desde'] : '';
-    if ($periodo == 'semana' && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $desde, $m) && checkdate($m[2], $m[3], $m[1])) {
-        $hasta = date('Y-m-d', strtotime("$desde +6 days"));
-    } else if ($periodo == 'mes' && preg_match('/^(\d{4})-(\d{2})$/', $desde, $m) && checkdate($m[2], 1, $m[1])) {
-        $desde .= '-01';
-        $hasta = date('Y-m-t', strtotime($desde));
-    } else {
-        http_response_code(400);
-        return json_encode(['error' => 'periodo inválido']);
-    }
-
-    sacRefrescar($conexion);
-    // c: cierre de auditoría; las llamadas posteriores son de la semana en curso y no se muestran.
-    $st = $conexion->prepare("WITH r AS (SELECT ?::date AS d, least(?::date, " . SAC_CORTE . "::date) AS h, " . SAC_CORTE . "::date AS c)
-            SELECT m.id_contacto, m.area, m.tipo, m.problema, m.barrio, m.fecha_cierre, m.fotos,
-                   CASE WHEN m.aud_fecha <= r.c THEN m.aud_resultado END AS aud_resultado,
-                   CASE WHEN m.aud_fecha <= r.c THEN m.aud_fecha END AS aud_fecha,
-                   (m.fecha_cierre BETWEEN r.d AND r.h)::int AS sol,
-                   (m.aud_fecha BETWEEN r.d AND r.h)::int AS aud,
-                   round(st_y(m.the_geom)::numeric, 6) AS lat, round(st_x(m.the_geom)::numeric, 6) AS lng
-            FROM gismcc.mv_sac_solucionados m, r
-            WHERE m.fecha_cierre BETWEEN r.d AND r.h OR m.aud_fecha BETWEEN r.d AND r.h");
-    $st->execute([$desde, $hasta]);
-    return json_encode(['desde' => $desde, 'hasta' => $hasta, 'rows' => $st->fetchAll(PDO::FETCH_ASSOC)]);
-}
-
-
 function getParcelasProvin($conexion)
 {
     $sql = $conexion->query("SELECT 
@@ -875,16 +805,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         isLogged();
         $response = getParcelasMuni($conexion);
         echo $response;
-    } else if ($query == 'sac_periodos') {
-
-        isLogged();
-        header('Content-Type: application/json');
-        echo sacPeriodos($conexion);
-    } else if ($query == 'sac_reclamos') {
-
-        isLogged();
-        header('Content-Type: application/json');
-        echo sacReclamos($conexion);
     } else if ($query == 'parcelas_provin') {
 
         isLogged();
